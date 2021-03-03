@@ -1,0 +1,98 @@
+html, body {
+	margin: 2px;
+}
+table {
+    border-collapse: collapse;
+	width: 100%;
+}
+table, th, td {
+    border: 1px solid black;
+}
+th, td {
+	padding: 5px;
+}
+tr,td.button{
+	width: 100%;
+}
+td.button{
+	display: grid;
+	max-width: 99%;
+}
+.coin {
+	text-align: center;
+}
+.val {
+	text-align: right;
+}
+.act {
+	width: 20%;
+}
+.btc {
+	color: #FF0000;
+	font-weight: 700;
+}
+.tk {
+	text-transform: uppercase;
+	text-decoration: none;
+	margin: 0 30px;
+	display: inline-block;
+}
+.sell {
+	color: #C80000;
+}
+.buy {
+	color: #00C800;
+}
+tr:hover {
+	background: #CCC;
+}
+.loss {
+	color: #cc0000;
+	font-weight:bold;
+}
+.win {
+	color: #00cc00;
+	font-weight:bold;
+}
+.text-center {
+	text-align: center;
+}
+.text-right {
+	text-align: right;
+}
+a {
+	text-decoration: none;
+	color: #0000FF;
+}
+.human::before {
+	content: ""
+}
+button{
+	margin-bottom: 5px;
+}
+/* Tooltip container */
+.tooltip {
+	position: relative;
+	display: inline-block;
+	border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+	visibility: hidden;
+	width: 120px;
+	background-color: black;
+	color: #fff;
+	text-align: center;
+	padding: 5px 0;
+	border-radius: 6px;
+
+	/* Position the tooltip text - see examples below! */
+	position: absolute;
+	z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+	visibility: visible;
+}

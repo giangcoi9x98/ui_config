@@ -1,0 +1,98 @@
+{
+	"enable": true,
+	"api": {
+		"key": "",
+		"secret": ""
+	},
+	"CONFIG": {
+		"CLOSE_TARGET": true,
+		"LTAKE_PROFIT": true,
+		"STAKE_PROFIT": true,
+		"STOPLOSS": "true",
+		"LPERTRADE": 39,
+		"SPERTRADE": 1,
+		"LDCA_COUNT": 3,
+		"SDCA_COUNT": 3,
+		"PER_TRADE": 100,
+		"LMAX_AMOUNT": 200,
+		"SMAX_AMOUNT": 1,
+		"LTOTAL_MAX_AMOUNT": 12000,
+		"STOTAL_MAX_AMOUNT": 12000,
+		"LTRAIL": 0.2,
+		"STRAIL": 0.2,
+		"DCA_DELAY": 10,
+		"TRADE_PERC": 0.2,
+		"LGAIN": [
+			0.6,
+			0.6,
+			0.6,
+			0.6
+		],
+		"SGAIN": [
+			0.5,
+			0.5,
+			0.5,
+			0.5
+		],
+		"LGAIN_RANGE": [
+			0.5,
+			0.5,
+			0.5,
+			0.5
+		],
+		"SGAIN_RANGE": [
+			0.1,
+			0.1,
+			0.1,
+			0.1
+		],
+		"SL_LEVEL": 10,
+		"SL_MINFUND": 200,
+		"CLOSE_MIN_FUND": 200,
+		"SL_TRAIL": 0.2,
+		"TARGET": 19000,
+		"CLOSE_TYPE": "BID",
+		"SDCA_LVL": [
+			1,
+			3,
+			5
+		],
+		"LDCA_LVL": [
+			2,
+			4,
+			6,
+			9
+		],
+		"MAX_FUNDINGRATE": {
+			"long": 0.3,
+			"short": 0.1
+		},
+		"LMFI_DCA": true,
+		"SHORT_SL_LEVEL": 10,
+		"LONG_SL_LEVEL": 10,
+		"LONG_STOPLOSS": false,
+		"SHORT_STOPLOSS": false,
+		"SMFI_DCA": false,
+
+
+//////-- chua có UI
+		"RSI_DCA_ENABLE": false,
+		"CHART_INTERVAL": "15m",
+		"RSI_PERIOD": 2,
+		"RSI_CROSS_POINT": {
+			"SHORT": 90,
+			"LONG": 9
+		},
+		"RSI_REACH_REQUIRED_POINT": {
+			"SHORT": 100,
+			"LONG": 0
+		},
+		"RSI_DATA_SOURCE": "close",
+		"STOCHRSI_ENABLED":  true,
+		"STOCHRSI_BUY_LEVEL":  0.02,
+		"STOCHRSI_LENGTH": 2,
+		"RSI_TAKE_PROFIT_ENABLED": true,
+		"RSI_TAKE_PROFIT_LONG": " 91",
+		"STOCHRSI_TAKE_PROFIT_ENABLED": false
+	}
+}

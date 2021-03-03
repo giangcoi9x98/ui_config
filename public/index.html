@@ -1,0 +1,610 @@
+<!Doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name=viewport content="initial-scale=1.0 maximum-scale=1.0">
+    <title>OK DCA</title>
+    <script src="/jquery-3.4.1.min.js"></script>
+    <script src="/sweetalert.min.js"></script>
+    <link rel="stylesheet" href="/style.css" type="text/css" />
+</head>
+
+<body>
+    <div id="app" v-if="user!=''" style="max-width: 800px;margin: 0 auto;">
+        <h1 style="text-align:center">{{user.split("-")[0]}}</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Config Name</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ON/OFF</td>
+                    <td>
+                        <select style="background: {{enable=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="enable">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+
+                    <td>Số tiền 1 lệnh Long</td>
+                    <td>
+
+                        <input type="numberpm2 " v-model="config.LPERTRADE">
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>Số tiền 1 lệnh Short</td>
+
+                    <td><input type="number" v-model="config.SPERTRADE"></td>
+
+                </tr>
+                <tr>
+                    <td>Long DCA level</td>
+                    <td><input type="text" v-model=ldcaLvl></td>
+                </tr>
+                <tr>
+                    <td>Short DCA level</td>
+                    <td><input type="text" v-model=sdcaLvl></td>
+                </tr>
+                <tr>
+                    <td>Số lần DCA Long</td>
+                    <td><input type="number" v-model="config.LDCA_COUNT"></td>
+                </tr>
+                <tr>
+                    <td>Số lần DCA Short</td>
+                    <td><input type="number" v-model="config.SDCA_COUNT"></td>
+                </tr>
+                <tr>
+                    <td>Số tiền tối đa 1 lệnh Long</td>
+                    <td><input type="number" v-model="config.LMAX_AMOUNT"></td>
+                </tr>
+                <tr>
+                    <td>Số tiền tối đa 1 lệnh Short</td>
+                    <td><input type="number" v-model="config.SMAX_AMOUNT"></td>
+                </tr>
+                <tr>
+                    <td>Tổng số tiền tối đa cho lệnh Long</td>
+                    <td><input type="number" v-model="config.LTOTAL_MAX_AMOUNT"></td>
+                </tr>
+                <tr>
+                    <td>Tổng số tiền tối đa cho lệnh Short</td>
+                    <td><input type="number" v-model="config.STOTAL_MAX_AMOUNT"></td>
+                </tr>
+                <tr>
+                    <td>Trailing Long (%)</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.LTRAIL">
+                            <span class="tooltiptext">Đạt đủ % đảo chiều ở giá trị này bot sẽ DCA</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Trailing Short (%)</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.STRAIL">
+                            <span class="tooltiptext">Đạt đủ % đảo chiều ở giá trị này bot sẽ DCA</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>DCA DELAY(s) </td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" min=10 v-model="config.DCA_DELAY">
+                            <span class="tooltiptext">Thời Gian Check lại DCA tính bằng giây</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>% âm dừng DCA</td>
+                    <td><input type="number" v-model="config.TRADE_PERC"></td>
+                </tr>
+                <tr>
+                    <td>TAKE PROFIT LONG</td>
+                    <td>
+                        <select v-model="ltp">
+                            <option v-repeat="longTP" value="{{$index}}">Step {{$index}}</option>
+                        </select>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.LGAIN[ltp]">
+                            <span class="tooltiptext">Lợi nhuận kì vọng chưa x20</span>
+                        </div>
+
+                        <div class="tooltip">
+                            <input type="number" v-model="config.LGAIN_RANGE[ltp]">
+                            <span class="tooltiptext">% Trailing cho Lệnh Long chỉ điền 1 chữ số sau dấu phẩy</span>
+                        </div>
+
+                        <select style="background: {{config.LTAKE_PROFIT=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="config.LTAKE_PROFIT">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+                        <ul>
+                            <li>Các Step TP Long: {{config.LGAIN}}</li>
+                            <li>Các Step Trail: {{config.LGAIN_RANGE}}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>TAKE PROFIT SHORT</td>
+                    <td>
+                        <select v-model="stp">
+                            <option v-repeat="shortTP" value="{{$index}}">Step {{$index}}</option>
+                        </select>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SGAIN[stp]">
+                            <span class="tooltiptext">Lợi nhuận kì vọng chưa x20</span>
+                        </div>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SGAIN_RANGE[stp]">
+                            <span class="tooltiptext">% Trailing cho Lệnh Short chỉ điền 1 chữ số sau dấu phẩy</span>
+                        </div>
+                        <select style="background: {{config.STAKE_PROFIT=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="config.STAKE_PROFIT">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+                        <ul>
+                            <li>Các Step TP Short : {{config.SGAIN}}</li>
+                            <li>Các Step Trail: {{config.SGAIN_RANGE}}</li>
+                        </ul>
+                    </td>
+                </tr>
+                <tr>
+                    <td>STOP LOSS</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SL_LEVEL">
+                            <span class="tooltiptext">% stoploss cho lệnh</span>
+                        </div>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SL_MINFUND">
+                            <span class="tooltiptext">Lệnh tối thiểu bao nhiêu $ thì Stoploss</span>
+                        </div>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SL_TRAIL" style="width: 73px;">
+                            <span class="tooltiptext">% trailing cho stoploss</span>
+                        </div>
+
+                        <select style="background: {{config.STOPLOSS=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="config.STOPLOSS">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>TARGET</td>
+                    <td>
+
+                        <div class="tooltip">
+                            <input type="number" v-model="config.TARGET">
+                            <span class="tooltiptext">Đủ ngưỡng Target này tool sẽ đóng lệnh theo lựa chọn nếu ON</span>
+                        </div>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.CLOSE_MIN_FUND">
+                            <span class="tooltiptext">Đóng các lệnh trên ? USD khi đặt ngưỡng</span>
+                        </div>
+
+                        <select v-model="config.CLOSE_TYPE">
+                            <option value="BID">BID</option>
+                            <option value="ASK">ASK</option>
+                            <option value="MARKET">MARKET</option>
+                        </select>
+                        <select style="background: {{config.CLOSE_TARGET=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="config.CLOSE_TARGET">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RSI_DCA_ENABLE</td>
+                    <td>
+                        <select style="background: {{config.RSI_DCA_ENABLE=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="config.RSI_DCA_ENABLE">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                <tr>
+                    <td>CHART_INTERVAL</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="text" v-model="config.CHART_INTERVAL">
+                            <span class="tooltiptext">Nhập thời gian</span>
+
+                        </div>
+                    </td>
+                </tr>  
+                 <tr>
+                    <td>RSI_PERIOD</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.RSI_PERIOD">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RSI_CROSS_POINT</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.RSI_CROSS_POINT.SHORT">
+                            <span class="tooltiptext">SHORT</span>
+                        </div>
+
+                        <div class="tooltip">
+                            <input type="number" v-model="config.RSI_CROSS_POINT.LONG">
+                            <span class="tooltiptext">LONG</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RSI_REACH_REQUIRED_POINT</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.RSI_REACH_REQUIRED_POINT.SHORT">
+                            <span class="tooltiptext">SHORT</span>
+                        </div>
+
+                        <div class="tooltip">
+                            <input type="number" v-model="config.RSI_REACH_REQUIRED_POINT.LONG">
+                            <span class="tooltiptext">LONG</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RSI_DATA_SOURCE</td>
+                    <td>
+                        <input type="text" v-model="config.RSI_DATA_SOURCE">
+
+                    </td>
+                </tr>
+                <tr>
+                    <td>STOCHRSI_ENABLED</td>
+                    <td>
+                    <select style="background: {{config.STOCHRSI_ENABLED=='true'?'greenyellow':'salmon'}};
+                    text-align: center;
+                    font-size: large;
+                    padding: 2px 15px;" v-model="config.STOCHRSI_ENABLED">
+                    <option style="background: greenyellow;" value="true">ON</option>
+                    <option style="background: salmon;" value="false">OFF</option>
+                    </td>
+                </select>
+                </tr>
+                <tr>
+                    <td>STOCHRSI_BUY_LEVEL</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.STOCHRSI_BUY_LEVEL">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>STOCHRSI_LENGTH</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.STOCHRSI_LENGTH">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>RSI_TAKE_PROFIT_ENABLED</td>
+                    <td>
+                    <select style="background: {{config.RSI_TAKE_PROFIT_ENABLED=='true'?'greenyellow':'salmon'}};
+                    text-align: center;
+                    font-size: large;
+                    padding: 2px 15px;" v-model="config.RSI_TAKE_PROFIT_ENABLED">
+                    <option style="background: greenyellow;" value="true">ON</option>
+                    <option style="background: salmon;" value="false">OFF</option>
+                    </td>
+                </select>
+                </tr>
+                <tr>
+                    <td>RSI_TAKE_PROFIT_LONG</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="text" v-model="config.RSI_TAKE_PROFIT_LONG">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>STOCHRSI_TAKE_PROFIT_ENABLED</td>
+                    <td>
+                    <select style="background: {{config.STOCHRSI_TAKE_PROFIT_ENABLED=='true'?'greenyellow':'salmon'}};
+                    text-align: center;
+                    font-size: large;
+                    padding: 2px 15px;" v-model="config.STOCHRSI_TAKE_PROFIT_ENABLED">
+                    <option style="background: greenyellow;" value="true">ON</option>
+                    <option style="background: salmon;" value="false">OFF</option>
+                    </td>
+                </select>
+                </tr>
+                <tr>
+                    <td>MAX_FUNDINGRATE</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.MAX_FUNDINGRATE.short">
+                            <span class="tooltiptext">SHORT</span>
+                        </div>
+
+                        <div class="tooltip">
+                            <input type="number" v-model="config.MAX_FUNDINGRATE.long">
+                            <span class="tooltiptext">LONG</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LMFI_DCA</td>
+                    <td>
+                    <select style="background: {{config.LMFI_DCA=='true'?'greenyellow':'salmon'}};
+                    text-align: center;
+                    font-size: large;
+                    padding: 2px 15px;" v-model="config.LMFI_DCA">
+                    <option style="background: greenyellow;" value="true">ON</option>
+                    <option style="background: salmon;" value="false">OFF</option>
+                    </td>
+                </select>
+                </tr>
+                <tr>
+                    <td>SHORT_SL_LEVEL</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SHORT_SL_LEVEL">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LONG_SL_LEVEL</td>
+                    <td>
+                        <div class="tooltip">
+                            <input type="number" v-model="config.SHORT_SL_LEVEL">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>LONG_STOPLOSS</td>
+                    <td>
+                        <select style="background: {{config.LONG_STOPLOSS=='true'?'greenyellow':'salmon'}};
+							text-align: center;
+							font-size: large;
+							padding: 2px 15px;" v-model="config.LONG_STOPLOSS">
+                            <option style="background: greenyellow;" value="true">ON</option>
+                            <option style="background: salmon;" value="false">OFF</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>SHORT_STOPLOSS</td>
+                    <td>
+                    <select style="background: {{config.SHORT_STOPLOSS=='true'?'greenyellow':'salmon'}};
+                    text-align: center;
+                    font-size: large;
+                    padding: 2px 15px;" v-model="config.SHORT_STOPLOSS">
+                    <option style="background: greenyellow;" value="true">ON</option>
+                    <option style="background: salmon;" value="false">OFF</option>
+                    </td>
+                </select>
+                </tr>
+                <tr>
+                    <td>SMFI_DCA</td>
+                    <td>
+                    <select style="background: {{config.SMFI_DCA=='true'?'greenyellow':'salmon'}};
+                    text-align: center;
+                    font-size: large;
+                    padding: 2px 15px;" v-model="config.SMFI_DCA">
+                    <option style="background: greenyellow;" value="true">ON</option>
+                    <option style="background: salmon;" value="false">OFF</option>
+                    </td>
+                </select>
+                </tr>
+
+                    <td colspan="2">
+                        <button v-on="click:saveConfig()">Save Config</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        *Note: <br />
+        <strong>ON/OFF:</strong> Bật tắt chức năng DCA<br /><br />
+        <strong>LPERTRADE/SPERTRADE:</strong> Số tiền tương ứng cho lệnh LONG/SHORT<br /><br />
+        <strong>LDCA_LVL/SDCA_LVL:</strong> % DCA cho từng bước cho lệnh LONG/SHORT ngăn cách nhau bởi dấu "," nếu điền
+        ít hơn số lần DCA thì lấy % cuối cùng cho các bước còn thiếu<br /><br />
+        <strong>LDCA_COUNT/SDCA_COUNT:</strong> Số lần DCA tương ứng cho lệnh Long và SHORT<br /><br />
+        <strong>LMAX_AMOUNT/SMAX_AMOUNT:</strong> Số tiền tối đa cho 1 lệnh DCA LONG/SHORT<br /><br />
+        <strong>LTOTAL_MAX_AMOUNT/STOTAL_MAX_AMOUNT:</strong> Tổng tiền cho lệnh Long và SHORT<br /><br />
+        <strong>TRAIL:</strong> % để trailing cho DCA - Nếu lỗ giảm x % thì bắt đầu DCA.<br /><br />
+        <strong>TRADE_PERC:</strong> Lỗ bao nhiêu % thì dừng không DCA - 20% điền 0.2<br /><br />
+        <strong>TARGET:</strong> Target số dư hiện tại đạt được sẽ chốt lãi toàn bộ các lệnh ở DCA LVL 3+ - Cách thức
+        chốt lãi - Có bật tính năng này hay không (ON/OFF)<br /><br />
+        <strong>% âm dừng DCA :</strong> 0.2 tương đương : (Lợi nhuận tạm tính/Số dư ban đầu)x100%
+        <= -20% thì dừng DCA<br /><br />
+
+
+
+
+    </div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/0.12.16/vue.min.js'></script>
+    <script>
+        let app = new Vue({
+            el: '#app',
+            data: {
+                enable: true,
+                config: {},
+                user: getUrlParameter('user'),
+                sdcaLvl: "",
+                ldcaLvl: "",
+                ltp: 0,
+                stp: 0
+            },
+            created() {
+                this.getConfig();
+            },
+            computed: {
+                longTP: function () {
+                    for (let i = 0; i < this.config.LGAIN.length; i++) {
+                        this.config.LGAIN[i] = parseFloat(this.config.LGAIN[i]);
+                    }
+                    for (let i = 0; i < this.config.LGAIN_RANGE.length; i++) {
+                        this.config.LGAIN_RANGE[i] = parseFloat(this.config.LGAIN_RANGE[i]);
+                    }
+                    if (!Array.isArray(this.config.LGAIN)) {
+                        this.config.LGAIN = [this.config.LGAIN]
+                    }
+                    if (!Array.isArray(this.config.LGAIN_RANGE)) {
+                        this.config.LGAIN_RANGE = [this.config.LGAIN_RANGE]
+                    }
+                    for (i = 0; i < this.config.LDCA_COUNT + 1; i++) {
+                        if (this.config.LGAIN[i] === undefined) {
+                            console.log(this.config.LGAIN[i])
+                            this.config.LGAIN[i] = this.config.LGAIN[this.config.LGAIN.length - 1];
+                        }
+                        if (this.config.LGAIN_RANGE[i] === undefined) {
+                            this.config.LGAIN_RANGE[i] = this.config.LGAIN_RANGE[this.config.LGAIN_RANGE.length - 1];
+                        }
+
+                    }
+                    this.config.LGAIN = this.config.LGAIN.slice(0, parseFloat(this.config.LDCA_COUNT) + 1)
+                    this.config.LGAIN_RANGE = this.config.LGAIN_RANGE.slice(0, parseFloat(this.config.LDCA_COUNT) + 1)
+                    return this.config.LGAIN
+                },
+                shortTP: function () {
+                    if (!Array.isArray(this.config.SGAIN)) {
+                        this.config.SGAIN = [this.config.SGAIN]
+                    }
+                    if (!Array.isArray(this.config.SGAIN_RANGE)) {
+                        this.config.SGAIN_RANGE = [this.config.SGAIN_RANGE]
+                    }
+                    for (let i = 0; i < this.config.SGAIN.length; i++) {
+                        this.config.SGAIN[i] = parseFloat(this.config.SGAIN[i]);
+                    }
+                    for (let i = 0; i < this.config.SGAIN_RANGE.length; i++) {
+                        this.config.SGAIN_RANGE[i] = parseFloat(this.config.SGAIN_RANGE[i]);
+                    }
+                    for (i = 0; i < this.config.SDCA_COUNT + 1; i++) {
+                        if (this.config.SGAIN[i] === undefined) {
+                            this.config.SGAIN[i] = this.config.LGAIN[this.config.SGAIN.length - 1];
+                        }
+                        if (this.config.SGAIN_RANGE[i] === undefined) {
+                            this.config.SGAIN_RANGE[i] = this.config.SGAIN_RANGE[this.config.SGAIN_RANGE.length - 1];
+                        }
+
+                    }
+                    this.config.SGAIN = this.config.SGAIN.slice(0, parseFloat(this.config.SDCA_COUNT) + 1)
+                    this.config.SGAIN_RANGE = this.config.SGAIN_RANGE.slice(0, parseFloat(this.config.SDCA_COUNT) + 1)
+                    return this.config.SGAIN
+                }
+            },
+            methods: {
+                getConfig: function () {
+                    $.ajax({
+                        url: "/getData?user=" + this.user,
+                    }).done(function (result) {
+                        this.enable = result.enable ? "true" : "false";
+                        this.config = result.CONFIG;
+                        this.config.CLOSE_TARGET = result.CONFIG.CLOSE_TARGET ? "true" : "false";
+                        this.config.LTAKE_PROFIT = result.CONFIG.LTAKE_PROFIT ? "true" : "false";
+                        this.config.STAKE_PROFIT = result.CONFIG.STAKE_PROFIT ? "true" : "false";
+                        this.config.RSI_DCA_ENABLE = result.CONFIG.RSI_DCA_ENABLE ? "true" : "false";
+                        this.config.RSI_TAKE_PROFIT_ENABLED = result.RSI_TAKE_PROFIT_ENABLED ? "true" : "false";
+                        this.config.STOCHRSI_TAKE_PROFIT_ENABLED = result.STOCHRSI_TAKE_PROFIT_ENABLED ? "true" : "false";
+                        this.config.LMFI_DCA = result.LMFI_DCA ? "true" : "false";
+
+
+                        this.config.STOPLOSS = result.CONFIG.STOPLOSS ? "true" : "false";
+                        this.sdcaLvl = result.CONFIG.SDCA_LVL.join(",");
+                        this.ldcaLvl = result.CONFIG.LDCA_LVL.join(",");
+
+                    }.bind(this));
+                },
+                saveConfig: function () {
+                    this.config.SDCA_LVL = this.sdcaLvl.split(",").map(x => +x);
+                    this.config.LDCA_LVL = this.ldcaLvl.split(",").map(x => +x);
+                    this.config.LPERTRADE = parseFloat(this.config.LPERTRADE);
+                    this.config.LDCA_COUNT = parseFloat(this.config.LDCA_COUNT);
+                    this.config.SDCA_COUNT = parseFloat(this.config.SDCA_COUNT);
+                    this.config.SPERTRADE = parseFloat(this.config.SPERTRADE);
+                    this.config.LMAX_AMOUNT = parseFloat(this.config.LMAX_AMOUNT);
+                    this.config.SMAX_AMOUNT = parseFloat(this.config.SMAX_AMOUNT);
+                    this.config.STOTAL_MAX_AMOUNT = parseFloat(this.config.STOTAL_MAX_AMOUNT);
+                    this.config.LTOTAL_MAX_AMOUNT = parseFloat(this.config.LTOTAL_MAX_AMOUNT);
+                    this.config.LTRAIL = parseFloat(this.config.LTRAIL);
+                    this.config.STRAIL = parseFloat(this.config.STRAIL);
+                    this.config.DCA_DELAY = parseFloat(this.config.DCA_DELAY) > 1 ? parseFloat(this.config.DCA_DELAY) : 1;
+                    this.config.TRADE_PERC = parseFloat(this.config.TRADE_PERC);
+                    this.config.TARGET = parseFloat(this.config.TARGET);
+                    this.config.SL_LEVEL = parseFloat(this.config.SL_LEVEL);
+                    for (let i = 0; i < this.config.SGAIN.length; i++) {
+                        this.config.SGAIN[i] = parseFloat(this.config.SGAIN[i]);
+                    }
+                    for (let i = 0; i < this.config.LGAIN.length; i++) {
+                        this.config.LGAIN[i] = parseFloat(this.config.LGAIN[i]);
+                    }
+                    for (let i = 0; i < this.config.SGAIN_RANGE.length; i++) {
+                        this.config.SGAIN_RANGE[i] = parseFloat(this.config.SGAIN_RANGE[i]);
+                    }
+                    for (let i = 0; i < this.config.LGAIN_RANGE.length; i++) {
+                        this.config.LGAIN_RANGE[i] = parseFloat(this.config.LGAIN_RANGE[i]);
+                    }
+                    this.config.SL_MINFUND = parseFloat(this.config.SL_MINFUND);
+                    this.config.SL_TRAIL = parseFloat(this.config.SL_TRAIL);
+                    this.config.CLOSE_MIN_FUND = parseFloat(this.config.CLOSE_MIN_FUND);
+                    swal("Save Config For DCA?", {
+                        buttons: {
+                            cancel: "Cancel",
+                            catch: {
+                                text: "Yes",
+                                value: "yes",
+                            },
+                            defeat: false,
+                        },
+                    }).then((value) => {
+                        switch (value) {
+                            case "yes":
+                                $.ajax({
+                                    url: "/saveData?user=" + this.user + "&enable=" + this.enable + "&config=" + JSON.stringify(this.config), success: function (result) {
+                                        swal("CONFIG SAVED", "Vui lòng Load lại trang để kiểm tra config đã đúng", "success");
+                                    }
+                                });
+                                break;
+                        }
+                    });
+                }
+            }
+        })
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+    </script>
+</body>
+
+</html>
